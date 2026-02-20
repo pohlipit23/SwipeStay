@@ -46,6 +46,7 @@ function devApiPlugin() {
       server.middlewares.use(async (req: any, res: any, next: any) => {
         if (!req.url?.startsWith('/api/')) return next()
 
+        const ts = new Date().toLocaleTimeString()
         res.setHeader('Content-Type', 'application/json')
         res.setHeader('Access-Control-Allow-Origin', '*')
 
@@ -60,10 +61,13 @@ function devApiPlugin() {
 
           // Route: GET /api/places
           if (req.method === 'GET' && url.pathname === '/api/places') {
+            console.log(`[${ts}] → GET /api/places search_text=${url.searchParams.get('search_text')}`)
             const upstream = await fetch(`${EASYGDS_BASE}/api/places?${url.searchParams}`, {
               headers: { Authorization: `Bearer ${token}` },
             })
             const body = await upstream.text()
+            console.log(`[${ts}] ← GET /api/places ${upstream.status}`)
+            if (!upstream.ok) console.error(`[${ts}]   body: ${body.slice(0, 500)}`)
             res.statusCode = upstream.status
             res.end(body)
             return
@@ -72,10 +76,14 @@ function devApiPlugin() {
           // Route: POST /api/hotels/search
           if (req.method === 'POST' && url.pathname === '/api/hotels/search') {
             const body = await readBody(req)
+            console.log(`[${ts}] → POST /api/hotels/search`)
+            console.log(`[${ts}]   req: ${body.slice(0, 500)}`)
             const upstream = await fetch(`${EASYGDS_BASE}/api/v2/products/hotels/availabilities`, {
               method: 'POST', headers, body,
             })
             const text = await upstream.text()
+            console.log(`[${ts}] ← POST /api/hotels/search ${upstream.status}`)
+            if (!upstream.ok) console.error(`[${ts}]   body: ${text.slice(0, 500)}`)
             res.statusCode = upstream.status
             res.end(text)
             return
@@ -84,10 +92,14 @@ function devApiPlugin() {
           // Route: POST /api/hotels/rates
           if (req.method === 'POST' && url.pathname === '/api/hotels/rates') {
             const body = await readBody(req)
+            console.log(`[${ts}] → POST /api/hotels/rates`)
+            console.log(`[${ts}]   req: ${body.slice(0, 500)}`)
             const upstream = await fetch(`${EASYGDS_BASE}/api/v2/products/hotels/availabilities/rates`, {
               method: 'POST', headers, body,
             })
             const text = await upstream.text()
+            console.log(`[${ts}] ← POST /api/hotels/rates ${upstream.status}`)
+            if (!upstream.ok) console.error(`[${ts}]   body: ${text.slice(0, 500)}`)
             res.statusCode = upstream.status
             res.end(text)
             return
@@ -95,6 +107,7 @@ function devApiPlugin() {
 
           next()
         } catch (err: any) {
+          console.error(`[${ts}] ✗ ${req.method} ${req.url} → ${err.message}`)
           res.statusCode = 500
           res.end(JSON.stringify({ error: { message: err.message } }))
         }

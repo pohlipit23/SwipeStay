@@ -9,52 +9,47 @@ interface ActionButtonsProps {
 
 export function ActionButtons({ onDismiss, onShortlist, onCompare, shortlistCount, isShortlisted, isFull }: ActionButtonsProps) {
   return (
-    <footer class="h-32 shrink-0 flex items-center justify-center gap-8 pb-2 px-4">
+    <nav class="px-8 py-5 pb-8 flex justify-center items-center gap-10 z-10">
       {/* Dismiss */}
-      <div class="flex flex-col items-center gap-2">
-        <button
-          onClick={onDismiss}
-          class="flex items-center justify-center size-16 rounded-full bg-white text-accent-rose shadow-card hover:bg-rose-50 transition-all active:scale-90 border border-slate-100"
-          aria-label="Dismiss hotel"
-        >
-          <span class="material-symbols-outlined text-[32px]">close</span>
-        </button>
-        <span class="text-xs font-bold text-slate-500 uppercase tracking-wider">Dismiss</span>
-      </div>
+      <button
+        onClick={onDismiss}
+        class="size-14 rounded-full border-2 border-slate-300 bg-white/50 backdrop-blur-sm flex items-center justify-center text-slate-400 hover:text-accent-rose hover:border-accent-rose hover:shadow-[0_0_10px_rgba(244,63,94,0.4)] hover:bg-white transition-all duration-300 active:scale-95"
+        aria-label="Dismiss hotel"
+      >
+        <span class="material-symbols-outlined text-3xl">close</span>
+      </button>
+
+      {/* Shortlist — hero button, slightly larger */}
+      <button
+        onClick={onShortlist}
+        disabled={isShortlisted || isFull}
+        class={`size-16 rounded-full border-2 backdrop-blur-md flex items-center justify-center transition-all duration-300 active:scale-95 relative overflow-hidden disabled:opacity-40 disabled:cursor-not-allowed ${
+          isShortlisted
+            ? 'border-accent-emerald bg-accent-emerald/20 text-accent-emerald shadow-[0_0_15px_rgba(16,185,129,0.4)]'
+            : 'border-azure-500 bg-azure-50/50 text-azure-600 hover:text-cyan hover:border-cyan hover:shadow-neon-hover hover:bg-white'
+        }`}
+        aria-label="Add to shortlist"
+      >
+        <div class="absolute inset-0 bg-gradient-to-tr from-cyan/20 to-transparent opacity-0 hover:opacity-100 transition-opacity" />
+        <span class={`material-symbols-outlined text-3xl relative z-10 ${isShortlisted ? 'filled-icon' : ''}`}>
+          {isShortlisted ? 'check' : 'rocket_launch'}
+        </span>
+      </button>
 
       {/* Compare */}
-      <div class="flex flex-col items-center gap-2">
-        <button
-          onClick={onCompare}
-          disabled={shortlistCount === 0}
-          class="flex items-center justify-center size-16 rounded-full bg-white text-primary shadow-card hover:bg-primary hover:text-white transition-all active:scale-90 border border-slate-100 group disabled:opacity-40 disabled:cursor-not-allowed"
-          aria-label="Compare shortlisted hotels"
-        >
-          <span class="material-symbols-outlined text-[32px] group-hover:scale-110 transition-transform">compare_arrows</span>
-        </button>
-        <span class="text-xs font-bold text-primary uppercase tracking-wider">Compare</span>
-      </div>
-
-      {/* Shortlist */}
-      <div class="flex flex-col items-center gap-2">
-        <button
-          onClick={onShortlist}
-          disabled={isShortlisted || isFull}
-          class={`flex items-center justify-center size-14 rounded-full shadow-sm transition-all active:scale-90 border border-slate-100 ${
-            isShortlisted
-              ? 'bg-accent-emerald text-white'
-              : 'bg-white text-primary hover:bg-primary/10'
-          } disabled:opacity-40 disabled:cursor-not-allowed`}
-          aria-label="Add to shortlist"
-        >
-          <span class={`material-symbols-outlined text-[24px] ${isShortlisted ? 'filled-icon' : ''}`}>
-            {isShortlisted ? 'check' : 'favorite'}
+      <button
+        onClick={onCompare}
+        disabled={shortlistCount === 0}
+        class="relative size-14 rounded-full border-2 border-slate-300 bg-white/50 backdrop-blur-sm flex items-center justify-center text-slate-400 hover:text-cyan hover:border-cyan hover:shadow-neon hover:bg-white transition-all duration-300 active:scale-95 disabled:opacity-40 disabled:cursor-not-allowed"
+        aria-label="Compare shortlisted hotels"
+      >
+        <span class="material-symbols-outlined text-3xl">bookmark_border</span>
+        {shortlistCount > 0 && (
+          <span class="absolute -top-1 -right-1 size-5 rounded-full bg-azure-500 text-white text-[10px] font-bold flex items-center justify-center shadow-sm border border-white">
+            {shortlistCount}
           </span>
-        </button>
-        <span class="text-[10px] font-bold text-primary uppercase tracking-wider">
-          {shortlistCount}/10
-        </span>
-      </div>
-    </footer>
+        )}
+      </button>
+    </nav>
   )
 }
